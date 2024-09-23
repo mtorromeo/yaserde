@@ -10,12 +10,12 @@ pub fn parse(
   root_attributes: &YaSerdeAttribute,
   generics: &Generics,
 ) -> TokenStream {
-  let namespaces_matching = root_attributes.get_namespace_matching(
-    &None,
-    quote!(enum_namespace),
-    quote!(named_element),
-    true,
-  );
+  // let namespaces_matching = root_attributes.get_namespace_matching(
+  //   &None,
+  //   quote!(enum_namespace),
+  //   quote!(named_element),
+  //   true,
+  // );
 
   let match_to_enum: TokenStream = data_enum
     .variants
@@ -47,7 +47,7 @@ pub fn parse(
         reader: &mut ::yaserde::de::Deserializer<R>,
       ) -> ::std::result::Result<Self, ::std::string::String> {
         let (named_element, enum_namespace) =
-          if let ::yaserde::__xml::reader::XmlEvent::StartElement{ name, .. } = reader.peek()?.to_owned() {
+          if let ::yaserde::__xml::reader::XmlEvent::StartElement{ name, .. } = dbg!(reader.peek()?.to_owned()) {
             (name.local_name.to_owned(), name.namespace.clone())
           } else {
             (::std::string::String::from(#root), ::std::option::Option::None)
@@ -56,7 +56,7 @@ pub fn parse(
         let start_depth = reader.depth();
         ::yaserde::__derive_debug!("Enum {} @ {}: start to parse {:?}", stringify!(#name), start_depth, named_element);
 
-        #namespaces_matching
+        // #namespaces_matching
 
         #[allow(unused_assignments, unused_mut)]
         let mut enum_value = ::std::option::Option::None;
