@@ -105,7 +105,7 @@ pub fn parse(
         }
 
         ::yaserde::__derive_debug!("Enum {} @ {}: success", stringify!(#name), start_depth);
-        ::std::result::Result::Ok(enum_value.unwrap_or(<#name as ::std::default::Default>::default()))
+        enum_value.ok_or_else(|| ::std::format!("Invalid value for {}", stringify!(#name)))
       }
     }
   }
