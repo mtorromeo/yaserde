@@ -394,3 +394,57 @@ fn tagged_enum() {
   serialize_and_validate!(model, content);
   deserialize_and_validate!(content, model, XmlStruct);
 }
+
+#[test]
+fn vec_of_enums() {
+  #[derive(Debug, PartialEq, YaDeserialize, YaSerialize)]
+  #[yaserde(rename = "base")]
+  pub struct XmlStruct {
+    ns: Vec<NsType>,
+  }
+
+  #[derive(Default, Debug, PartialEq, YaDeserialize, YaSerialize)]
+  pub enum NsType {
+    #[yaserde(rename = "hostObj")]
+    HostObj(LabelType),
+    #[yaserde(rename = "hostAttr")]
+    HostAttr(HostAttrType),
+    #[default]
+    #[allow(non_camel_case_types)]
+    __undefined__,
+  }
+
+  #[derive(Debug, PartialEq, YaDeserialize, YaSerialize)]
+  pub struct HostAttrType {
+    #[yaserde(rename = "hostName")]
+    pub host_name: LabelType,
+    #[yaserde(rename = "hostAddr")]
+    pub host_addr: Vec<String>,
+  }
+
+  #[derive(Debug, PartialEq, YaDeserialize, YaSerialize)]
+  pub struct LabelType {
+    #[yaserde(text = true)]
+    pub content: String,
+  }
+
+  let model = XmlStruct {
+    ns: vec![
+      NsType::HostAttr(HostAttrType {
+        host_name: LabelType {
+          content: "hostname1".to_string(),
+        },
+        host_addr: vec!["hostaddr1-1".to_string()],
+      }),
+      NsType::HostAttr(HostAttrType {
+        host_name: LabelType {
+          content: "hostname2".to_string(),
+        },
+        host_addr: vec!["hostaddr2-1".to_string()],
+      }),
+    ],
+  };
+  let content = "<base><ns><hostAttr><hostName>hostname1</hostName><hostAddr>hostaddr1-1</hostAddr></hostAttr><hostAttr><hostName>hostname2</hostName><hostAddr>hostaddr2-1</hostAddr></hostAttr></ns></base>";
+  serialize_and_validate!(model, content);
+  deserialize_and_validate!(content, model, XmlStruct);
+}
