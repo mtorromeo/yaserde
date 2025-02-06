@@ -23,6 +23,9 @@ pub struct YaSerdeAttribute {
   /// Declare all namespaces with prefix/URL
   #[serde(default)]
   pub namespaces: BTreeMap<String, String>,
+  /// Declare static XML attributes
+  #[serde(default)]
+  pub attributes: BTreeMap<String, String>,
   /// Set the prefix for the scope
   #[serde(default)]
   pub prefix: Option<String>,

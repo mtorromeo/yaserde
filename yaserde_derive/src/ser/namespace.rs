@@ -19,3 +19,15 @@ pub fn generate_namespaces_definition(attributes: &YaSerdeAttribute) -> TokenStr
     })
     .collect()
 }
+
+pub fn generate_static_attributes_definition(attributes: &YaSerdeAttribute) -> TokenStream {
+  attributes
+    .attributes
+    .iter()
+    .map(|(name, value)| {
+      quote!(
+        .attr(#name, #value)
+      )
+    })
+    .collect()
+}

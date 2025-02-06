@@ -1,5 +1,6 @@
 use crate::common::YaSerdeAttribute;
 use crate::ser::namespace::generate_namespaces_definition;
+use crate::ser::namespace::generate_static_attributes_definition;
 use proc_macro2::Ident;
 use proc_macro2::TokenStream;
 use quote::quote;
@@ -14,6 +15,7 @@ pub fn implement_serializer(
   generics: &Generics,
 ) -> TokenStream {
   let namespaces_definition = generate_namespaces_definition(attributes);
+  let static_attributes_definition = generate_static_attributes_definition(attributes);
   let flatten = attributes.flatten;
 
   let (impl_generics, ty_generics, where_clause) = generics.split_for_impl();
@@ -33,7 +35,7 @@ pub fn implement_serializer(
 
           let yaserde_label = writer.get_start_event_name().unwrap_or_else(|| #root.to_string());
           let struct_start_event =
-            ::yaserde::__xml::writer::XmlEvent::start_element(yaserde_label.as_ref()) #namespaces_definition;
+            ::yaserde::__xml::writer::XmlEvent::start_element(yaserde_label.as_ref()) #namespaces_definition #static_attributes_definition;
           #append_attributes
 
           let event: ::yaserde::__xml::writer::events::XmlEvent = struct_start_event.into();
